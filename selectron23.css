@@ -1,0 +1,92 @@
+.selectron23{
+    display: block;
+    height: auto;
+    width: fit-content;
+}
+
+.selectron23-container{
+    font-family: sans-serif;
+    background: rgb(238, 238, 238);
+    border-radius: 2px;
+    border: solid 1px #ccc;
+    position: relative;
+    cursor: pointer;
+    padding: 1px;
+    width: 300px;
+    min-height: 1px;
+    max-height: 1px;
+    overflow: hidden;
+    position: absolute;
+    z-index: 9999;
+    user-select: none;
+    box-shadow: 0px 1px 3px #ddd;
+}
+
+.selectron23-container .selectron23-option{
+    padding: 9px 20px 9px 9px;
+    cursor: pointer;
+    background: #fcfcfc;
+    margin-bottom: 2px;
+    border-bottom: solid 1px #ddd;
+    transition: all 0.25s ease-in-out;
+    text-shadow: 0px 1px 0.5px #fff;
+}
+
+.selectron23-container .selectron23-option img{
+    margin-top: -3px;
+}
+
+.selectron23-container div:last-of-type{
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.selectron23-container .selectron23-option[data-selected='1'],
+.selectron23-container .selectron23-option:hover{
+    background: #f6f6f6;
+}
+
+.selectron23-option img{
+    max-width: 100px;
+    margin-right: 5px;
+    float: left;
+    vertical-align: middle;
+}
+
+.selectron23-option-title{
+    font-weight: bold;
+    color: #000;
+    font-size: 0.9em;
+    line-height: 1.2em;
+}
+
+.selectron23-option-text{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #aaa;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1.4em;
+    font-size: 12px;
+}
+
+.selectron23-container[data-opened="0"] > span {
+    border: solid 5px transparent;
+    border-top: solid 5px #000;
+}
+
+.selectron23-container[data-opened="1"] > span {
+    border: solid 5px transparent;
+    border-bottom: solid 5px #000;
+    margin-top: -8px;
+}
+
+.selectron23-container > span {
+    cursor: pointer;
+    width: 0;
+    height: 0;
+    position: absolute;
+    right: 10px;
+    margin-top: 0;
+}
+
