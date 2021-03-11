@@ -1,5 +1,5 @@
 # selectron23
-JS drop-down with images and description text. Its can create drop-down in usual div container, and also wrap tag select.
+JS drop-down with images and description text. Its can create drop-down in usual div container, and also wrap tag select. Demo om: [codepen.io](https://codepen.io/rostislav-sofronov/pen/NWbeoYy)
 
 
 Example:
