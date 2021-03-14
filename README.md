@@ -1,5 +1,5 @@
 # selectron23
-Selectron23 - pure JS drop-down <select> with API and images and description text. Its can create drop-down in usual div container, and also wrap tag select. Demo on: [codepen.io](https://codepen.io/rostislav-sofronov/pen/NWbeoYy)
+Selectron23 - pure JS drop-down with API and images and description text. Its can create drop-down in usual div container, and also wrap tag select. Demo on: [codepen.io](https://codepen.io/rostislav-sofronov/pen/NWbeoYy)
 
 
 Example:
