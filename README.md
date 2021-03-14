@@ -4,20 +4,18 @@ JS drop-down with images and description text. Its can create drop-down in usual
 
 Example:
 ```html
-<div style="display: flex; justify-content: center; flex-direction: column; ">
+<div style="display: flex; justify-content: center; flex-direction: column;">
     <div style="width: 100%; padding-bottom: 40px;">
         <div id="block-example"></div>
         <br />
-        <a href="javascript: selector1.select('gbp'); void(0);">Select GBP</a>
-      &nbsp;|&nbsp;<a href="javascript: add_currency('jpy'); void(0);">Add JPY</a>
-      &nbsp;|&nbsp;Selected value: <span id="selector1-value">-</span><br />
+        <a href="javascript: selector1.select('gbp'); void(0);">Select GBP</a>&nbsp;|&nbsp;<a href="javascript: add_currency('jpy'); void(0);">Add JPY</a>&nbsp;|&nbsp;Selected value: <span id="selector1-value">uah</span><br />
     </div>
 
     <div style="width: 100%;">
-        <select id="drop-down-example" name="hello_world">
-            <option value="1">uno</option>
-            <option value="2">dos</option>
-            <option value="3">tres</option>
+        <select id="drop-down-example" name="hello_world" data-label="Select any currency" data-width="50%" data-imgpos="right" data-fusion="0">
+            <option value="usd" data-img="https://pluginus.net/wp-content/uploads/2021/03/united_states_of_america.gif" data-text="United States">USD</option>
+            <option value="eur" data-img="https://pluginus.net/wp-content/uploads/2021/03/european_union.gif" data-text="Euro union">EUR</option>
+            <option value="gbp" data-img="https://pluginus.net/wp-content/uploads/2021/03/united_kingdom.gif" data-text="Great Britain">GBP</option>
         </select><br />
         Selected value: <span id="selector2-value">-</span><br />
     </div>
@@ -27,6 +25,10 @@ Example:
 
 ```javascript
 //demo
+document.getElementById('drop-down-example').addEventListener('change', function () {
+    console.log('event attached to the <select>:', this.value)
+});
+
 let data1 = {
     options: [
         {
@@ -55,20 +57,21 @@ let data1 = {
         }
     ],
     label: 'Select currency',
-    //selected: 'uah',
+    selected: 'uah',
     width: '90%',
-    img_position: 'right',
-    input: 'my_value', //hidden input name
+    imgpos: 'right',
+    //name: 'my_value', //hidden input name
     fusion: false//use if wrap <select> to fuse titles by keys with options description here
 };
 
 var selector1 = new Selectron23(document.querySelector('#block-example'), data1);
-
-let data2 = Object.assign({}, data1);
-delete data2.selected;
-data2.img_position = 'left';
-data2.label = 'Select Number';
-var selector2 = new Selectron23(document.querySelector('#drop-down-example'), data2);
+/*
+ let data2 = Object.assign({}, data1);
+ delete data2.selected;
+ data2.imgpos = 'left';
+ data2.label = 'Select Number';
+ */
+var selector2 = new Selectron23(document.querySelector('#drop-down-example'), {});
 
 
 //demo
@@ -91,7 +94,7 @@ function add_currency(value) {
     })) {
         selector1.select(value);
     } else {
-        alert('JPY already in!')
+        alert('JPY already in!');
     }
 }
 
