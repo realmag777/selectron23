@@ -1,5 +1,5 @@
 /*!
- * Selectron23 v.1.0.0 // 2021.03.11
+ * Selectron23 v.1.0.1 // 2021.03.11
  * https://github.com/realmag777/selectron23
  *
  * You may use Selectron23 under the terms of the MIT license. Basically that
@@ -8,7 +8,7 @@
  */
 
 'use strict';
-
+//14-03-2021
 class Selectron23 {
     constructor(element, data = {}) {
 
@@ -16,25 +16,42 @@ class Selectron23 {
 
         this.el = document.createElement('div');
         this.el.className = 'selectron23';
-        element.insertAdjacentElement('afterend', this.el);
+        this.element = element;
+        this.element.insertAdjacentElement('afterend', this.el);
 
-        if (element.tagName.toLowerCase() === 'select') {
+        if (this.element.tagName.toLowerCase() === 'select') {
             //select replacement
-            element.style.display = 'none';
-            if (element.hasAttribute('name')) {
-                data.input = element.getAttribute('name');
+            this.element.style.display = 'none';
+            if (this.element.hasAttribute('name')) {
+                //data.name = this.element.getAttribute('name');
             }
 
-            let options = element.querySelectorAll('option');
+            let selected = null;
+            let options = this.element.querySelectorAll('option');
             if (options.length > 0) {
                 let fusion = Boolean(data.fusion);
 
                 let opt = [];
                 options.forEach((o) => {
-                    opt.push({
+
+                    let d = {
                         value: o.value,
                         title: o.textContent
-                    });
+                    };
+
+                    if (o.hasAttribute('data-img') && o.getAttribute('data-img').length > 0) {
+                        d.img = o.getAttribute('data-img');
+                    }
+
+                    if (o.hasAttribute('data-text') && o.getAttribute('data-text').length > 0) {
+                        d.text = o.getAttribute('data-text');
+                    }
+
+                    opt.push(d);
+
+                    if (o.hasAttribute('selected')) {
+                        selected = o.value;
+                    }
                 });
 
                 //data fusion
@@ -50,7 +67,21 @@ class Selectron23 {
                     });
                 }
 
+                //+++
+
                 data.options = opt;
+
+                if (selected !== null) {
+                    data.selected = selected;
+                }
+            }
+
+            //+++
+
+            if (Object.keys(this.element.dataset).length > 0) {
+                Object.keys(this.element.dataset).forEach((key) => {
+                    data[key] = this.element.dataset[key];
+                });
             }
 
         }
@@ -104,10 +135,10 @@ class Selectron23 {
             this.container.style.width = this.data.width;
         }
 
-        if (typeof this.data.input !== 'undefined') {
+        if (typeof this.data.name !== 'undefined') {
             this.input = document.createElement('input');
             this.input.setAttribute('type', 'hidden');
-            this.input.setAttribute('name', this.data.input);
+            this.input.setAttribute('name', this.data.name);
             this.input.setAttribute('value', '');
             if (this.container.querySelector('div').hasAttribute('data-value')) {
                 this.input.setAttribute('value', this.container.querySelector('div').getAttribute('data-value'));
@@ -140,8 +171,8 @@ class Selectron23 {
         option.className = 'selectron23-option';
 
         let float = 'left';
-        if (typeof this.data.img_position !== 'undefined') {
-            if (this.data.img_position === 'right') {
+        if (typeof this.data.imgpos !== 'undefined') {
+            if (this.data.imgpos === 'right') {
                 float = 'right';
             }
         }
@@ -238,6 +269,10 @@ class Selectron23 {
         } else {
             this.select(target.getAttribute('data-value'));
             this.show(false);
+            if (this.element.tagName.toLowerCase() === 'select') {
+                this.element.value = this.value;
+                this.element.dispatchEvent(new Event("change"));
+            }
         }
 
     }
@@ -297,7 +332,7 @@ class Selectron23 {
     }
 
     onSelect() {
-        //for outside only
+        //for API
     }
 }
 
