@@ -61,7 +61,8 @@ let data1 = {
     width: '90%',
     imgpos: 'right',
     //name: 'my_value', //hidden input name
-    fusion: false//use if wrap <select> to fuse titles by keys with options description here
+    fusion: false,//use if wrap <select> to fuse titles by keys with options description here
+    max_open_height: 200, //max height (px) of opened drop-down when vertical scroll appears
 };
 
 var selector1 = new Selectron23(document.querySelector('#block-example'), data1);
