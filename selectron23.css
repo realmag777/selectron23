@@ -1,5 +1,5 @@
 /*!
- * Selectron23 v.1.0.2 // 2021.03.23
+ * Selectron23 v.1.0.3 // 2021.05.24
  * https://github.com/realmag777/selectron23
  *
  * You may use Selectron23 under the terms of the MIT license. Basically that
@@ -10,7 +10,15 @@
 .selectron23{
     display: inline-block;
     height: auto;
+    max-width: 100%;
     position: relative;
+    transform: scale(1);
+    transform-origin: top left;   
+    z-index: 999999;
+}
+
+.selectron23 *{
+    box-sizing: content-box !important;
 }
 
 .selectron23-container{
@@ -33,13 +41,15 @@
 }
 
 .selectron23-container .selectron23-option{
+    position: relative;
+    overflow: hidden;
     padding: 9px 20px 9px 9px;
     cursor: pointer;
     background: #fcfcfc;
     margin-bottom: 2px;
-    border-bottom: solid 1px #ddd;
+    /* border-bottom: solid 1px #ddd; */
     transition: all 0.25s ease-in-out;
-    text-shadow: 0px 1px 0.5px #fff;
+    /* text-shadow: 0px 1px 0.5px #fff; */
 }
 
 .selectron23-container .selectron23-option img{
@@ -47,8 +57,8 @@
 }
 
 .selectron23-container div:last-of-type{
-    border-bottom: none;
-    margin-bottom: 0;
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
 }
 
 
@@ -62,16 +72,17 @@
 
 
 .selectron23-option img{
-    max-width: 100px;
+    max-width: 100%;
     margin-right: 5px;
     float: left;
     vertical-align: middle;
+    border-radius: 0;
 }
 
 .selectron23-option-title{
     font-weight: bold;
     color: #000;
-    font-size: 0.9em;
+    font-size: 14px;
     line-height: 1.2em;
 }
 
@@ -85,14 +96,20 @@
     font-size: 12px;
 }
 
+.selectron23-container > span{
+    border-color: #000;
+    border: none;
+    color: #000;
+}
+
 .selectron23-container[data-opened="0"] > span {
     border: solid 5px transparent;
-    border-top: solid 5px #000;
+    border-top: solid 5px;
 }
 
 .selectron23-container[data-opened="1"] > span {
     border: solid 5px transparent;
-    border-bottom: solid 5px #000;
+    border-bottom: solid 5px;
     margin-top: -8px;
 }
 

@@ -1,17 +1,25 @@
-/*!
- * Selectron23 v.1.0.2 // 2021.03.23
- * https://github.com/realmag777/selectron23
+/**
+ * @summary     Selectron23
+ * @description drop-down
+ * @version     1.0.3
+ * @file        selectron23
+ * @author      realmag777
+ * @contact     https://pluginus.net/contact-us/
+ * @github      https://github.com/realmag777/selectron23
+ * @copyright   Copyright 2021 Rostislav Sofronov
  *
- * You may use Selectron23 under the terms of the MIT license. Basically that
+ * This source file is free software, available under the following license:
+ *   MIT license - https://en.wikipedia.org/wiki/MIT_License .Basically that
  * means you are free to use Selectron23 as long as this header is left intact.
- * Copyright 2021 Rostislav Sofronov
  */
 
 'use strict';
-//23-03-2021
+
 class Selectron23 {
     constructor(element, data = {}) {
         this.data = data;
+
+        this.scale = 1;
         Selectron23.z_index = 9999;
 
         this.el = document.createElement('div');
@@ -20,7 +28,7 @@ class Selectron23 {
         if (this.element.tagName.toLowerCase() === 'select') {
             this.element.insertAdjacentElement('afterend', this.el);
         } else {
-             this.element.insertAdjacentElement('afterbegin', this.el);
+            this.element.insertAdjacentElement('afterbegin', this.el);
         }
 
         if (this.element.tagName.toLowerCase() === 'select') {
@@ -39,7 +47,6 @@ class Selectron23 {
 
                 let opt = [];
                 options.forEach((o) => {
-
                     let d = {
                         value: o.value,
                         title: o.textContent
@@ -101,6 +108,18 @@ class Selectron23 {
         this._draw();
         this.el.querySelector('*').addEventListener('click', ev => this._click(ev));
         document.addEventListener('click', ev => this.show(false));
+        document.addEventListener('set_selectron23_value', ev => {
+            let can = false;
+
+            if (ev.detail.selects === 'all') {
+                can = true;
+            }
+
+            if (can) {
+                this.select(ev.detail.value, false);
+            }
+
+        });
         return this;
     }
 
@@ -159,12 +178,6 @@ class Selectron23 {
         if (!this.container.querySelector(`[data-value="${data.value}"]`)) {
             let option = this._create_option(data);
             this.container.appendChild(option);
-
-            if (data.img) {
-                //img height fix
-                option.querySelector('img').style.maxHeight = parseInt(option.offsetHeight - option.offsetHeight * 0.25) + 'px';
-            }
-
             return true;
         }
 
@@ -199,19 +212,26 @@ class Selectron23 {
             if (!text) {
                 margin_top = 'margin-top: -6px;';
             }
-            img = `<img src='${data.img}' alt='' loading='lazy' style="float: ${float}; ${margin_top}" />`;
+            img = `<img src='${data.img}' alt='' loading='lazy' class='selectron23-img' style="float: ${float}; ${margin_top}" />`;
         }
 
         option.innerHTML = `${img}<div>${title}${text}</div>`;
 
+        if (typeof data.title_attributes !== 'undefined' && Object.keys(data.title_attributes).length > 0) {
+            for (const [kk, vv] of Object.entries(data.title_attributes)) {
+                option.querySelector('.selectron23-option-title').setAttribute(kk, vv);
+            }
+        }
+
         if (img) {
-            option.querySelector('img').style.maxHeight = parseInt(option.offsetHeight - option.offsetHeight * 0.25) + 'px';
+            //option.querySelector('img').style.maxHeight = parseInt(option.offsetHeight - option.offsetHeight * 0.25) + 'px';
+            option.querySelector('img').style.maxHeight = '38px';
         }
 
         return option;
     }
 
-    select(value) {
+    select(value, call_event = true) {
         if (this.value !== value) {
 
             if (!this.container.querySelector(`[data-value="${value}"]`)) {
@@ -237,7 +257,10 @@ class Selectron23 {
             if (this.input) {
                 this.input.value = value;
             }
-            this.onSelect();
+
+            if (call_event) {
+                this.onSelect();
+            }
 
             return true;
         }
@@ -255,7 +278,7 @@ class Selectron23 {
 
         let target = ev.target;
 
-        if (!target.hasAttribute('data-value')) {
+        if (!target.hasAttribute('data-value') && !target.hasAttribute('data-pointer')) {
             target = target.closest('.selectron23-option');
         }
 
@@ -296,7 +319,7 @@ class Selectron23 {
             let timer = setInterval(() => {
                 let max_height = 0;
 
-                if (typeof this.data.max_open_height !== 'undefined') {
+                if (typeof this.data.max_open_height !== 'undefined' && this.data.max_open_height > 0) {
                     max_height = parseInt(this.data.max_open_height);
                 } else {
                     this.container.querySelectorAll('.selectron23-option').forEach(function (item) {
@@ -317,7 +340,7 @@ class Selectron23 {
                         this.container.style.maxHeight = '100vh';
                     }
                     this.container.setAttribute('data-opened', 1);
-                    this.pointer.style.top = (parseInt(this.pointer.style.top) + 3) + 'px';
+                    this.pointer.style.top = (parseInt(this.pointer.style.top) + 1) + 'px';
                 }
                 counter++;
             }, 10);
@@ -327,7 +350,7 @@ class Selectron23 {
             }
 
             this.container.setAttribute('data-opened', 0);
-            this.pointer.style.top = (parseInt(this.pointer.style.top) - 3) + 'px';
+            this.pointer.style.top = (parseInt(this.pointer.style.top) - 1) + 'px';
 
             this._normalize_min_height();
             this.container.style.maxHeight = this.container.style.minHeight;
@@ -341,12 +364,290 @@ class Selectron23 {
     _normalize_min_height() {
         this.container.style.minHeight = this.container.querySelector('div').clientHeight + 'px';
         this.el.style.height = (parseInt(this.container.style.minHeight) + 1) + 'px';//!!
-        this.pointer.style.top = parseInt(this.container.style.minHeight) / 2 + 'px';
+        this.pointer.style.top = (parseInt(this.container.style.minHeight) / 2) - 2 + 'px';
         //this.el.style.maxHeight = window.getComputedStyle(this.el, null).getPropertyValue('min-height');
+    }
+
+    setWidth(width) {
+        if (width === '100p') {
+            this.el.style.flexBasis = this.el.style.width = this.element.style.width = '100%';
+        } else {
+            this.el.style.flexBasis = this.el.style.width = this.element.style.width = width + 'px';
+        }
+    }
+
+    setScale(height) {
+        let scale = parseFloat(height / 100);
+        this.el.style.transform = `scale(${scale})`;
+    }
+
+    setDescriptionTextSize(size) {
+        this.el.querySelectorAll('.selectron23-option-text').forEach((option) => {
+            option.style.fontSize = size + 'px';
+        });
+
+        this._normalize_min_height();
+    }
+
+    setTitleFontSize(size) {
+        this.el.querySelectorAll('.selectron23-option-title').forEach((option) => {
+            option.style.fontSize = size + 'px';
+        });
+
+        this._normalize_min_height();
+    }
+
+    setTitleValue(value) {
+        this.el.querySelectorAll('.selectron23-option-title').forEach((option) => {
+            if (value.length > 0) {
+                option.innerText = value;
+            }
+        });
+    }
+
+    setTitleFont(font) {
+        this.el.querySelectorAll('.selectron23-option-title').forEach((option) => {
+            option.style.fontFamily = font;
+        });
+
+        this._normalize_min_height();
+    }
+
+    setDescriptionFont(font) {
+        this.el.querySelectorAll('.selectron23-option-text').forEach((option) => {
+            option.style.fontFamily = font;
+        });
+
+        this._normalize_min_height();
+    }
+
+    setBorderRadius(radius) {
+        let scale = parseFloat(radius / 100);
+        this.container.style.borderRadius = (parseInt(this.container.style.minHeight) / 2 * scale) + 'px';
+    }
+
+    showImg(is) {
+        this.el.querySelectorAll('.selectron23-img').forEach((option) => {
+            option.style.display = is ? 'inline-block' : 'none';
+        });
+
+        this._normalize_min_height();
+    }
+
+    setImgVPosition(margin) {
+        this.el.querySelectorAll('.selectron23-img').forEach((option) => {
+            option.style.marginTop = margin + 'px';
+        });
+
+        this._normalize_min_height();
+    }
+
+    setImgHeight(height) {
+        this.el.querySelectorAll('.selectron23-img').forEach((option) => {
+            option.style.height = height + 'px';
+            option.style.maxHeight = height + 'px';
+        });
+
+        this._normalize_min_height();
+    }
+
+    setImgSide(side) {
+        this.el.querySelectorAll('.selectron23-img').forEach((option) => {
+            option.style.float = side ? 'right' : 'left';
+        });
+    }
+
+    showDescription(is) {
+        this.el.querySelectorAll('.selectron23-option-text').forEach((option) => {
+            if (is) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+
+        this._normalize_min_height();
+    }
+
+    showTitle(is) {
+        this.el.querySelectorAll('.selectron23-option-title').forEach((option) => {
+            if (is) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+
+        this._normalize_min_height();
+    }
+
+    setBorderColor(value) {
+        this.container.style.borderColor = value;
+    }
+
+    setDescriptionColor(value) {
+        this.el.querySelectorAll('.selectron23-option-text').forEach((option) => {
+            option.style.color = value;
+        });
+    }
+
+    setTitleColor(value) {
+        this.el.querySelectorAll('.selectron23-option-title').forEach((option) => {
+            option.style.color = value;
+        });
+    }
+
+    setTitleBold(value) {
+        this.el.querySelectorAll('.selectron23-option-title').forEach((option) => {
+            option.style.fontWeight = value ? 'bold' : 'normal';
+        });
+
+        this._normalize_min_height();
+    }
+
+    setBackgroundColor(value) {
+        this.el.querySelectorAll('.selectron23-option').forEach((option) => {
+            option.style.background = value;
+        });
+    }
+
+    setPointerColor(value) {
+        //this.pointer.style.borderColor = value;
+        this.pointer.style.color = value;
+    }
+
+    setContainerBgColor(value) {
+        this.container.style.background = value;
+    }
+
+    setDividerSize(value) {
+        this.el.querySelectorAll('.selectron23-option').forEach((option) => {
+            option.style.marginBottom = value + 'px';
+        });
+
+        this._normalize_min_height();
+    }
+
+    setBorderWidth(value) {
+        this.container.style.borderWidth = value + 'px';
+    }
+
+    setMaxOpenHeight(value) {
+        this.data.max_open_height = value;
+        this._normalize_min_height();
+    }
+
+    applyDesignSettings(settings) {
+        for (const [key, value] of Object.entries(settings)) {
+            switch (key) {
+                case 'width':
+                    this.setWidth(value);
+                    if (settings.width_p100) {
+                        this.setWidth('100p');
+                    }
+                    break;
+
+                case 'img_pos':
+                    this.setImgSide(value);
+                    break;
+
+                case 'max_open_height':
+                    this.setMaxOpenHeight(value);
+                    break;
+
+                case 'show_img':
+                    this.showImg(value);
+                    break;
+
+                case 'scale':
+                    this.setScale(value);
+                    break;
+
+                case 'description_font_size':
+                    this.setDescriptionTextSize(value);
+                    break;
+
+                case 'title_show':
+                    this.showTitle(value);
+                    break;
+
+                case 'title_font_size':
+                    this.setTitleFontSize(value);
+                    break;
+
+                case 'title_color':
+                    this.setTitleColor(value);
+                    break;
+
+                case 'title_bold':
+                    this.setTitleBold(value);
+                    break;
+
+                case 'title_font':
+                    this.setTitleFont(value);
+                    break;
+
+                case 'title_value':
+                    this.setTitleValue(value);
+                    break;
+
+                case 'border_radius':
+                    this.setBorderRadius(value);
+                    break;
+
+                case 'border_color':
+                    this.setBorderColor(value);
+                    break;
+
+                case 'img_height':
+                    this.setImgHeight(value);
+                    break;
+
+                case 'img_vertival_pos':
+                    this.setImgVPosition(value);
+                    break;
+
+                case 'show_description':
+                    this.showDescription(value);
+                    break;
+
+                case 'description_color':
+                    this.setDescriptionColor(value);
+                    break;
+
+                case 'description_font':
+                    this.setDescriptionFont(value);
+                    break;
+
+
+                case 'background_color':
+                    this.setBackgroundColor(value);
+                    break;
+
+                case 'pointer_color':
+                    this.setPointerColor(value);
+                    break;
+
+                case 'divider_color':
+                    this.setContainerBgColor(value);
+                    break;
+
+                case 'divider_size':
+                    this.setDividerSize(value);
+                    break;
+
+                case 'border_width':
+                    this.setBorderWidth(value);
+                    break;
+            }
+        }
+
+        this._normalize_min_height();
     }
 
     onSelect() {
         //for API
     }
+
 }
 
