@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Selectron 23 - pure javascript dropdown with images</title>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <meta name="description" content="Drop-down made by pure javascript with images">
+        <meta property="og:description" content="Drop-down made by pure javascript with images">
+        <meta property="twitter:description" content="Drop-down made by pure javascript with images">
+        <meta property="og:title" content="Drop-down made by pure javascript with images">
+        <meta property="twitter:title" content="Drop-down made by pure javascript with images">
+
+        <link rel="canonical" href="https://css.pluginus.net/selectron23/">
+        <meta property="og:locale" content="en">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://css.pluginus.net/selectron23/">
+        <meta property="og:site_name" content="Selectron23">
+        <meta property="og:image" content="https://stackovergo.com/assets/img/share.png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="1200">
+        <meta property="twitter:card" content="summary">
+        <meta property="twitter:url" content="https://css.pluginus.net/selectron23/">
+        <meta property="twitter:image" content="https://stackovergo.com/assets/img/share.png">
+        <meta property="vk:image" content="https://stackovergo.com/assets/img/share.png">
+
+
+
+        <script src="selectron23.js"></script>
+        <link rel="stylesheet" href="selectron23.css" />
+        <link href="https://stackovergo.com/assets/prism.css" rel="stylesheet">
+    </head>
+    <body>
+        <h3>Selectron from tag div:</h3>
+
+        <div style="width: 100%; display: flex; justify-content: space-around">
+            <div id="block-example" style="flex-basis: 48%;"></div>
+            <div id="block-example2" style="flex-basis: 48%;"></div>
+        </div>
+        <br />
+        <div style="width: 100%; display: flex; justify-content: space-around;">
+            <div style="flex-basis: 48%;">
+                <a href="javascript: selector1.select('gbp'); void(0);">Select GBP in 1</a>&nbsp;|&nbsp;<a href="javascript: add_currency('jpy', 1); void(0);">Add JPY to 1</a>&nbsp;|&nbsp;Selected value in 1: <span id="selector1-value" style="font-weight: bold;">uah</span><br />
+
+            </div>
+            <div style="flex-basis: 48%;">
+                <a href="javascript: selector2.select('gbp'); void(0);">Select GBP in 2</a>&nbsp;|&nbsp;<a href="javascript: add_currency('jpy', 2); void(0);">Add JPY to 2</a>&nbsp;|&nbsp;Selected value in 2: <span id="selector2-value" style="font-weight: bold;">uah</span><br />
+            </div>
+        </div>
+
+        <br /><br />
+        <h3>Fusion applied to usual drop-down:</h3>
+        <div style="width: 100%;">
+            <select id="drop-down-example3" name="hello_world" data-label="Select any currency" data-width="50%" data-imgpos="right" data-fusion="0">
+                <option value="usd" data-img="https://pluginus.net/wp-content/uploads/2021/03/united_states_of_america.gif" data-text="United States">USD</option>
+                <option value="eur" data-img="https://pluginus.net/wp-content/uploads/2021/03/european_union.gif" data-text="Euro union">EUR</option>
+                <option value="gbp" data-img="https://pluginus.net/wp-content/uploads/2021/03/united_kingdom.gif" data-text="Great Britain">GBP</option>
+            </select><br />
+            Selected value: <span id="selector3-value" style="font-weight: bold;">-</span><br />
+        </div>
+
+        <br />
+
+        <h4>Created by code:</h4>
+        <pre style="padding: 0;">
+        <code class="language-js">
+//demo
+document.getElementById('drop-down-example3').addEventListener('change', function () {
+    console.log('event attached to the <select>:', this.value)
+});
+
+let data1 = {
+    options: [
+        {
+            value: 'usd',
+            title: 'USD',
+            text: 'United States Dollar',
+            img: 'https://pluginus.net/wp-content/uploads/2021/03/united_states_of_america.gif'
+        },
+        {
+            value: 'eur',
+            title: 'EUR',
+            text: 'European Euro',
+            img: 'https://pluginus.net/wp-content/uploads/2021/03/european_union.gif'
+        },
+        {
+            value: 'uah',
+            title: 'UAH',
+            text: 'Украинская гривна',
+            img: 'https://pluginus.net/wp-content/uploads/2021/03/ukraine.gif'
+        },
+        {
+            value: 'gbp',
+            title: 'GBP',
+            text: 'Great Britain pound',
+            img: 'https://pluginus.net/wp-content/uploads/2021/03/united_kingdom.gif'
+        }
+    ],
+    label: 'Select currency',
+    selected: 'uah',
+    width: '100%',
+    imgpos: 'right',
+    //name: 'my_value', //hidden input name
+    fusion: false, //use if wrap <select> to fuse titles by keys with options description here
+    max_open_height: 200, //max height (px) of opened drop-down when vertical scroll appears
+};
+
+var selector1 = new Selectron23(document.querySelector('#block-example'), data1);
+
+let data2 = Object.assign({}, data1);
+data2.imgpos = 'left';
+delete data2.max_open_height;
+var selector2 = new Selectron23(document.querySelector('#block-example2'), data2);
+
+//html5 drop-down wrapping
+var selector3 = new Selectron23(document.querySelector('#drop-down-example3'), {});
+
+
+//demo
+selector1.onSelect = function () {
+    console.log('selector1', this.value);
+    document.getElementById('selector1-value').innerText = this.value;
+};
+
+selector2.onSelect = function () {
+    console.log('selector2', this.value);
+    document.getElementById('selector2-value').innerText = this.value;
+};
+
+selector3.onSelect = function () {
+    console.log('selector3', this.value);
+    document.getElementById('selector3-value').innerText = this.value;
+};
+
+function add_currency(value, num = 1) {
+
+    let selector = null;
+    if (parseInt(num) === 1) {
+        selector = selector1;
+    } else {
+        selector = selector2;
+    }
+
+    if (selector.append({
+        value: value,
+        title: 'JPY',
+        text: 'Japan Yen',
+        img: 'https://pluginus.net/wp-content/uploads/2021/03/japan.gif'
+    })) {
+        selector.select(value);
+    } else {
+        alert('JPY already in!');
+}
+}
+
+        </code>
+        </pre>
+        <br />
+        <hr />
+        <br />
+        <a href="selectron23.zip" rel="demo">DOWNLOAD SCRIPT AND DEMO</a><br />
+        <br />
+
+
+        <script>
+            //demo
+            document.getElementById('drop-down-example3').addEventListener('change', function () {
+                console.log('event attached to the <select>:', this.value)
+            });
+
+            let data1 = {
+                options: [
+                    {
+                        value: 'usd',
+                        title: 'USD',
+                        text: 'United States Dollar',
+                        img: 'https://pluginus.net/wp-content/uploads/2021/03/united_states_of_america.gif'
+                    },
+                    {
+                        value: 'eur',
+                        title: 'EUR',
+                        text: 'European Euro',
+                        img: 'https://pluginus.net/wp-content/uploads/2021/03/european_union.gif'
+                    },
+                    {
+                        value: 'uah',
+                        title: 'UAH',
+                        text: 'Украинская гривна',
+                        img: 'https://pluginus.net/wp-content/uploads/2021/03/ukraine.gif'
+                    },
+                    {
+                        value: 'gbp',
+                        title: 'GBP',
+                        text: 'Great Britain pound',
+                        img: 'https://pluginus.net/wp-content/uploads/2021/03/united_kingdom.gif'
+                    }
+                ],
+                label: 'Select currency',
+                selected: 'uah',
+                width: '100%',
+                imgpos: 'right',
+                //name: 'my_value', //hidden input name
+                fusion: false, //use if wrap <select> to fuse titles by keys with options description here
+                max_open_height: 200, //max height (px) of opened drop-down when vertical scroll appears
+            };
+
+            var selector1 = new Selectron23(document.querySelector('#block-example'), data1);
+
+            let data2 = Object.assign({}, data1);
+            data2.imgpos = 'left';
+            delete data2.max_open_height;
+            var selector2 = new Selectron23(document.querySelector('#block-example2'), data2);
+
+            var selector3 = new Selectron23(document.querySelector('#drop-down-example3'), {});
+
+
+            //demo
+            selector1.onSelect = function () {
+                console.log('selector1', this.value);
+                document.getElementById('selector1-value').innerText = this.value;
+            };
+
+            selector2.onSelect = function () {
+                console.log('selector2', this.value);
+                document.getElementById('selector2-value').innerText = this.value;
+            };
+
+            selector3.onSelect = function () {
+                console.log('selector3', this.value);
+                document.getElementById('selector3-value').innerText = this.value;
+            };
+
+            //for demo new option appending
+            function add_currency(value, num = 1) {
+
+                let selector = null;
+                if (parseInt(num) === 1) {
+                    selector = selector1;
+                } else {
+                    selector = selector2;
+                }
+
+                if (selector.append({
+                    value: value,
+                    title: 'JPY',
+                    text: 'Japan Yen',
+                    img: 'https://pluginus.net/wp-content/uploads/2021/03/japan.gif'
+                })) {
+                    selector.select(value);
+                } else {
+                    alert('JPY already in!');
+            }
+            }
+
+        </script>
+
+
+
+        <script>
+
+            window.addEventListener('load', function () {
+
+                document.querySelectorAll('code').forEach(function (code) {
+                    code.classList.add('language-markup');
+                    if (code.parentNode.nodeName.toLowerCase() === 'pre') {
+                        code.parentNode.className = 'language-markup language-js line-numbers prettyprint prettyprinted';
+                    }
+                });
+
+                var imported = document.createElement('script');
+                imported.src = 'https://stackovergo.com/assets/prism.js';
+                document.head.appendChild(imported);
+
+
+                //+++++++++++++++
+
+                var s = document.createElement('script');
+                s.type = "text/javascript";
+                s.src = "//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4ee9edf5292bf868";
+                document.body.appendChild(s);
+
+
+            });
+
+        </script>
+
+        <style>
+            .at-icon-wrapper{
+                width:35px!important;
+                height:35px!important;
+            }
+
+            .at-custom-sidebar{width:49px!important}
+            .at-custom-sidebar .at-icon{margin:0!important}
+
+            .at-custom-sidebar.atss-left{
+                left: auto;
+                right: 0;
+            }
+            
+            
+            
+code[class*="language-"],pre[class*="language-"]{color:#000;background:none;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}
+pre[class*="language-"]::-moz-selection,pre[class*="language-"] ::-moz-selection,code[class*="language-"]::-moz-selection,code[class*="language-"] ::-moz-selection{background:#318DFE}
+pre[class*="language-"]::selection,pre[class*="language-"] ::selection,code[class*="language-"]::selection,code[class*="language-"] ::selection{background:#318DFE}
+pre[class*="language-"]{padding:1em;margin:.5em 0;overflow:auto}
+:not(pre) > code[class*="language-"],pre[class*="language-"]{background:#fff}
+:not(pre) > code[class*="language-"]{padding:.1em;border-radius:.3em;white-space:normal}
+pre[class*="language-"].line-numbers{position:relative;counter-reset:linenumber}
+pre[class*="language-"].line-numbers > code{position:relative;white-space:inherit;overflow:auto}
+.line-numbers .line-numbers-rows{display:block;position:absolute;pointer-events:none;top:0;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+.line-numbers-rows > span{display:block;counter-increment:linenumber}
+.line-numbers-rows > span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}
+pre.line-numbers .line-numbers-rows{border-right:3px solid #1CBF60}
+pre[class*="language-"]>code{background-color:#fdfdfd;background-image:linear-gradient(transparent 50%,rgba(242,245,249,1) 50%);background-size:3em 3em;background-origin:content-box;background-attachment:local;display:block;padding-left:3.8em;border:1px solid #E5EAF1}
+
+        </style>
+
+
+    </body>
+</html>
